@@ -21,9 +21,9 @@ def create_XGBoost() -> Pipeline:
     ])
 
     param_grid = {
-        'n_estimators': [100, 200, 300],
-        'max_depth': [3, 4, 5],
-        'learning_rate': [0.01, 0.1, 0.2]
+        "clf__learning_rate": [0.01, 0.1, 0.2],
+        "clf__max_depth": [3, 6, 9],
+        "clf__n_estimators": [100, 200],
     }
 
     return model, param_grid

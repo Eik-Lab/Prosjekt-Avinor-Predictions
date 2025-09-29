@@ -191,7 +191,7 @@ def pipeline_preprocessor() -> ColumnTransformer:
                           and one-hot encoding to categorical features.
     """
     
-    numeric_features = ["sched_flights", "sched_concurrence", "actual_concurrence"]
+    numeric_features = ["sched_flights", "sched_concurrence"]
     categorical_features = ["airport_group", "season", "hour"]
 
     numeric_transformer = StandardScaler()
