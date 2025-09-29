@@ -52,7 +52,7 @@ def get_season(date: date) -> str:
         return 'Fall'
 
 
-def preprocessing(df: pd.DataFrame, testing: bool = False) -> pd.DataFrame:
+def preprocessing(df: pd.DataFrame, predict: bool = False) -> pd.DataFrame:
     """
     Preprocess flight data to compute scheduled and actual concurrency metrics,
     and annotate with season and other derived columns.
@@ -60,23 +60,25 @@ def preprocessing(df: pd.DataFrame, testing: bool = False) -> pd.DataFrame:
     Args:
         df (DataFrame): Raw flight data containing columns like
                         'dep_airport_group', 'arr_airport_group', 'std', 'atd', 'sta', 'ata', 'cancelled'.
-        testing (bool): If True, disables actual datetime/hour and concurrency calculations,
-                        replacing them with simple test placeholders.
+        predict (bool): If True, ignores actual datetime/hour and concurrency calculations,
+                        should be True if the dataset is going to be prepared for testing / predicting
 
     Returns:
         DataFrame: Aggregated flight data grouped by scheduled date, hour, and airport group,
                    including concurrency and season.
     """
-    # Drop unnecessary columns
-    df_reduced = df.drop(columns=["service_type", "dep_airport", "arr_airport"], errors='ignore')
 
-    # Remove cancelled flights
+    # Drop unnecessary columns
+    df_reduced = df.drop(columns = ["service_type", "dep_airport", "arr_airport"], errors = 'ignore')
+
+    # Remove cancelled flights and the whole coloumn 
+    # because this will be another prediction we do not want to predict
     df_cleaned = df_reduced[df_reduced["cancelled"] != 1].copy()
-    df_cleaned = df_cleaned.drop(columns="cancelled", errors='ignore')
+    df_cleaned = df_cleaned.drop(columns = "cancelled", errors = 'ignore')
 
     # Departures dataframe
     df_departures = df_cleaned[["dep_airport_group", "std", "atd"]].copy()
-    df_departures = df_departures.rename(columns={
+    df_departures = df_departures.rename(columns = {
         "dep_airport_group": "airport_group",
         "std": "datetime",
         "atd": "actual_datetime"
@@ -91,20 +93,17 @@ def preprocessing(df: pd.DataFrame, testing: bool = False) -> pd.DataFrame:
     })
 
     # Combine departures and arrivals
-    df_events = pd.concat([df_departures, df_arrivals], ignore_index=True)
+    df_events = pd.concat([df_departures, df_arrivals], ignore_index = True)
 
-    # Ensure datetime columns are proper datetimes
-    df_events["datetime"] = pd.to_datetime(df_events["datetime"], errors="coerce")
-    df_events["actual_datetime"] = pd.to_datetime(df_events["actual_datetime"], errors="coerce")
+    if predict:
+        df_events["datetime"] = pd.to_datetime(df_events["datetime"], errors = "coerce")
 
-    if testing:
-        # Use dummy placeholders for tests
-        df_events["sched_date"] = "2000-01-01"
-        df_events["sched_hour"] = 0
-        df_events["actual_date"] = "2000-01-01"
-        df_events["actual_hour"] = 0
+        df_events["sched_date"] = df_events["datetime"].dt.date
+        df_events["sched_hour"] = df_events["datetime"].dt.hour
     else:
-        # Extract real scheduled and actual dates/hours
+        df_events["datetime"] = pd.to_datetime(df_events["datetime"], errors = "coerce")
+        df_events["actual_datetime"] = pd.to_datetime(df_events["actual_datetime"], errors="coerce")
+
         df_events["sched_date"] = df_events["datetime"].dt.date
         df_events["sched_hour"] = df_events["datetime"].dt.hour
         df_events["actual_date"] = df_events["actual_datetime"].dt.date
@@ -112,11 +111,10 @@ def preprocessing(df: pd.DataFrame, testing: bool = False) -> pd.DataFrame:
 
     # Group by scheduled date, hour, and airport group
     def group_func(g):
-        if testing:
+        if predict:
             return pd.Series({
                 "sched_flights": len(g),
-                "sched_concurrence": 0,   # fake concurrency
-                "actual_concurrence": 0   # fake concurrency
+                "sched_concurrence": compute_concurrency(g["datetime"]),
             })
         else:
             return pd.Series({
@@ -134,23 +132,18 @@ def preprocessing(df: pd.DataFrame, testing: bool = False) -> pd.DataFrame:
     )
 
     # Flag concurrency presence
-    df_grouped["concurrency"] = (
-        df_grouped["actual_concurrence"] > 0
-    ).astype(int)
+    # removing number of concurrence since this is not important for the prediction
+    if not predict:
+        df_grouped["concurrency"] = (df_grouped["actual_concurrence"] > 0).astype(int)
+        df_grouped = df_grouped.drop(columns = "actual_concurrence")
 
     # Add season
-    if testing:
-        df_grouped["season"] = "Test"
-    else:
-        df_grouped["season"] = df_grouped["date"].apply(get_season)
+    df_grouped["season"] = df_grouped["date"].apply(get_season)
 
     # Reorder columns to place season after hour
     cols = df_grouped.columns.tolist()
     cols.insert(cols.index("hour") + 1, cols.pop(cols.index("season")))
     df_grouped = df_grouped[cols]
-
-    # removing number of concurrence since this is not important for the prediction
-    df_grouped = df_grouped.drop(columns = "actual_concurrence")
 
     return df_grouped
 
