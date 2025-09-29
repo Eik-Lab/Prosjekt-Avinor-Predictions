@@ -73,8 +73,9 @@ def preprocessing(df: pd.DataFrame, predict: bool = False) -> pd.DataFrame:
 
     # Remove cancelled flights and the whole coloumn 
     # because this will be another prediction we do not want to predict
-    df_cleaned = df_reduced[df_reduced["cancelled"] != 1].copy()
-    df_cleaned = df_cleaned.drop(columns = "cancelled", errors = 'ignore')
+    if not predict:
+        df_cleaned = df_reduced[df_reduced["cancelled"] != 1].copy()
+        df_cleaned = df_cleaned.drop(columns = "cancelled", errors = 'ignore')
 
     # Departures dataframe
     df_departures = df_cleaned[["dep_airport_group", "std", "atd"]].copy()
