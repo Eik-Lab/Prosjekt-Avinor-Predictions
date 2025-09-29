@@ -109,7 +109,7 @@ def model_predict(data_path: str, model: Any)  -> pd.DataFrame:
         "pred": prediction
     })
 
-    answer.to_csv("tootoonchi_minaipour.csv", encoding = "UTF-8", index = False)
+    answer.to_csv("data/tootoonchi_minaipour.csv", encoding = "UTF-8", index = False)
 
     # sort
     answer = answer.sort_values(by=["date", "hour", "airport_group"]).reset_index(drop = True)
