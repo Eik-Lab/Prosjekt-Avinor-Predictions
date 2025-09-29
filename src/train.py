@@ -1,17 +1,15 @@
 from dataclasses import dataclass
 from sklearn.model_selection import GridSearchCV
 from typing import Callable
-import joblib
 import pandas as pd
 
 from .data_preprocessing import preprocessing, split_data
-from .model import create_XGBoost
 
 @dataclass
 class TrainConfig:
     flight_csv: str
     model_name: str
-    model_function: Callable = create_XGBoost
+    model_function: Callable
 
 
 def train(cfg: TrainConfig):
@@ -36,4 +34,4 @@ def train(cfg: TrainConfig):
     print("Best parameters:", grid_search.best_params_)
     print("Best CV F1 score:", grid_search.best_score_)
 
-    joblib.dump(grid_search.best_estimator_, f"{cfg.model_name}.pkl")
+    return grid_search.best_estimator_
