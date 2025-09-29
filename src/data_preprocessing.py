@@ -77,21 +77,38 @@ def preprocessing(df: pd.DataFrame, predict: bool = False) -> pd.DataFrame:
         df_cleaned = df_reduced[df_reduced["cancelled"] != 1].copy()
         df_cleaned = df_cleaned.drop(columns = "cancelled", errors = 'ignore')
 
-    # Departures dataframe
-    df_departures = df_cleaned[["dep_airport_group", "std", "atd"]].copy()
-    df_departures = df_departures.rename(columns = {
-        "dep_airport_group": "airport_group",
-        "std": "datetime",
-        "atd": "actual_datetime"
-    })
+        # Departures dataframe
+        df_departures = df_cleaned[["dep_airport_group", "std", "atd"]].copy()
+        df_departures = df_departures.rename(columns = {
+            "dep_airport_group": "airport_group",
+            "std": "datetime",
+            "atd": "actual_datetime"
+        })
 
-    # Arrivals dataframe
-    df_arrivals = df_cleaned[["arr_airport_group", "sta", "ata"]].copy()
-    df_arrivals = df_arrivals.rename(columns={
-        "arr_airport_group": "airport_group",
-        "sta": "datetime",
-        "ata": "actual_datetime"
-    })
+        # Arrivals dataframe
+        df_arrivals = df_cleaned[["arr_airport_group", "sta", "ata"]].copy()
+        df_arrivals = df_arrivals.rename(columns={
+            "arr_airport_group": "airport_group",
+            "sta": "datetime",
+            "ata": "actual_datetime"
+        })
+
+    else:
+        df_cleaned = df_reduced.copy()
+
+        # Departures dataframe
+        df_departures = df_cleaned[["dep_airport_group", "std"]].copy()
+        df_departures = df_departures.rename(columns = {
+            "dep_airport_group": "airport_group",
+            "std": "datetime"
+        })
+
+        # Arrivals dataframe
+        df_arrivals = df_cleaned[["arr_airport_group", "sta"]].copy()
+        df_arrivals = df_arrivals.rename(columns={
+            "arr_airport_group": "airport_group",
+            "sta": "datetime"
+        })
 
     # Combine departures and arrivals
     df_events = pd.concat([df_departures, df_arrivals], ignore_index = True)

@@ -3,6 +3,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.base import BaseEstimator
 from typing import Callable, Any
 import pandas as pd
+import numpy as np
 
 from .data_preprocessing import preprocessing, split_data
 
@@ -99,17 +100,18 @@ def model_predict(data_path: str, model: Any)  -> pd.DataFrame:
     df_raw = pd.read_csv(data_path)
     df = preprocessing(df_raw, predict = True)
 
-    prediction = model.predict(df)
+    prediction = np.round(model.predict_proba(df)[:, 1], 3)
 
     answer = pd.DataFrame({
         "airport_group": df["airport_group"],
         "date": df["date"],
         "hour": df["hour"],
-        "prediction_clf": prediction
+        "pred": prediction
     })
 
-    answer["pred"] = (answer.groupby(["airport_group", "hour"])["prediction_clf"].transform("mean"))
+    answer.to_csv("tootoonchi_minaipour.csv", encoding = "UTF-8", index = False)
 
-    df.to_csv("tootoonchi_minaipour.csv", encoding = "UTF-8", index = False)
+    # sort
+    answer = answer.sort_values(by=["date", "hour", "airport_group"]).reset_index(drop = True)
 
     return answer

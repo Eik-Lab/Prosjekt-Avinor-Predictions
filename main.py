@@ -1,4 +1,4 @@
-from src.train import TrainConfig, train
+from src.train import TrainConfig, train, model_predict
 from src.model import create_XGBoost
 
 def main():
@@ -10,6 +10,7 @@ def main():
                          model_function = create_XGBoost)
     model = train(config)
 
+    model_predict("data/schedule_oct2025.csv", model)
     
 
 if __name__ == "__main__":
