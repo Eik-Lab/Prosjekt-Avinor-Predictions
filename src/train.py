@@ -64,7 +64,7 @@ def train(cfg: TrainConfig)-> BaseEstimator:
     grid_search = GridSearchCV(
         estimator = model,
         param_grid = params,
-        scoring = 'f1',
+        scoring = 'roc_auc',
         cv = 3,
         verbose = 1,
         n_jobs = -1
@@ -73,7 +73,7 @@ def train(cfg: TrainConfig)-> BaseEstimator:
     grid_search.fit(X_train, y_train)
 
     print("Best parameters:", grid_search.best_params_)
-    print("Best CV F1 score:", grid_search.best_score_)
+    print("Best CV AUC-ROC score:", grid_search.best_score_)
 
     return grid_search.best_estimator_
 
