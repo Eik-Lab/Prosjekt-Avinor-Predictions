@@ -1,18 +1,58 @@
 from dataclasses import dataclass
 from sklearn.model_selection import GridSearchCV
-from typing import Callable
+from sklearn.base import BaseEstimator
+from typing import Callable, Any
 import pandas as pd
 
 from .data_preprocessing import preprocessing, split_data
 
 @dataclass
 class TrainConfig:
+    """
+    Configuration object for the training pipeline.
+
+    Attributes:
+        flight_csv (str): 
+            Path to the CSV file containing flight data.
+
+        model_name (str): 
+            A name or identifier for the model being trained.
+
+        model_function (Callable[[], Tuple[BaseEstimator, Dict[str, Any]]]): 
+            A callable that returns a tuple `(model, params)` where:
+              - model (BaseEstimator): An untrained scikit-learn estimator.
+              - params (dict): A dictionary of hyperparameter candidates
+                for grid search.
+    """
     flight_csv: str
     model_name: str
     model_function: Callable
 
 
-def train(cfg: TrainConfig):
+def train(cfg: TrainConfig)-> BaseEstimator:
+    """
+    Train a machine learning model using grid search with cross-validation.
+
+    This function loads flight data, preprocesses it, splits it into training 
+    and test sets, and performs hyperparameter tuning using GridSearchCV 
+    with F1 score as the evaluation metric.
+
+    Args:
+        cfg (TrainConfig): 
+            A configuration object containing:
+            - flight_csv (str): Path to the input flight CSV file.
+            - model_name (str): A name/label for the model.
+            - model_function (Callable): A function that returns a 
+              tuple `(model, params)` where:
+                * model (BaseEstimator): An untrained scikit-learn model.
+                * params (dict): A dictionary of hyperparameters for grid search.
+
+    Returns:
+        BaseEstimator: 
+            The best estimator (model) found by grid search, trained 
+            on the training data with optimal hyperparameters.
+    """
+
     df_raw = pd.read_csv(cfg.flight_csv)
     df = preprocessing(df_raw)
     model, params = cfg.model_function()
@@ -35,3 +75,41 @@ def train(cfg: TrainConfig):
     print("Best CV F1 score:", grid_search.best_score_)
 
     return grid_search.best_estimator_
+
+
+def model_predict(data_path: str, model: Any)  -> pd.DataFrame:
+    """
+    Run predictions using a trained model and save results to a CSV file.
+
+    Args:
+        data_path (str):
+            Path to the input CSV file containing raw data.
+        model (Any):
+            A trained ML model object that implements a `.predict()` method.
+
+    Returns:
+        pd.DataFrame:
+            A DataFrame containing columns:
+                - airport_group (str): One-letter airport group code
+                - date (str): Prediction date in format 'YYYY-MM-DD'
+                - hour (int): Hour of the day (0-23)
+                - pred (float): Averaged probability per airport group/hour
+    """
+
+    df_raw = pd.read_csv(data_path)
+    df = preprocessing(df_raw, predict = True)
+
+    prediction = model.predict(df)
+
+    answer = pd.DataFrame({
+        "airport_group": df["airport_group"],
+        "date": df["date"],
+        "hour": df["hour"],
+        "prediction_clf": prediction
+    })
+
+    answer["pred"] = (answer.groupby(["airport_group", "hour"])["prediction_clf"].transform("mean"))
+
+    df.to_csv("tootoonchi_minaipour.csv", encoding = "UTF-8", index = False)
+
+    return answer
