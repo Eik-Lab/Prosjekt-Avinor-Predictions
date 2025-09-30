@@ -52,11 +52,8 @@ def create_RandomForest() -> Pipeline:
     ])
 
     param_grid = {
-        "clf__n_estimators": [100, 200, 500],
-        "clf__max_depth": [None, 10, 20, 30],
-        "clf__min_samples_split": [2, 5, 10],
-        "clf__min_samples_leaf": [1, 2, 4],
-        "clf__bootstrap": [True, False],
+        "clf__n_estimators": [100, 200],
+        "clf__max_depth": [None, 10, 20]
     }
 
     return model, param_grid
@@ -82,7 +79,7 @@ def create_SVC() -> Pipeline:
 
     param_grid = {
         "clf__C": [0.1, 1, 10],
-        "clf__kernel": ["linear", "rbf", "poly"],
+        "clf__kernel": ["rbf", "poly"],
         "clf__gamma": ["scale", "auto"],
     }
 
