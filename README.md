@@ -24,6 +24,7 @@ Løsningen er bygget opp i en modulær arkitektur med klare komponenter samlet i
 - Prediksjon (main.py): Benyttes til å kjøre modellen på nye datasett (f.eks. preds_mal.csv) og lagrer resultatene i CSV-format med sannsynligheter (pred-kolonnen). Dette sikrer at innleveringen følger kravene i konkurransen.
 
 Oversikt over system arkitektur 
+
 <img width="481" height="584" alt="Avinor_Predictions_Architecture" src="https://github.com/user-attachments/assets/718aa884-6a00-48b3-9bc7-417de6d05dab" />
 
 ## Modellen for vår prediksjon - XGBoost 
