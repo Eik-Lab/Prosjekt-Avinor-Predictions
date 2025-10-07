@@ -1,4 +1,21 @@
-# Avinor datakonkurranse: Prediksjon av avvik i flytrafikken 
+# Avinor - Prediksjon av avvik i flytrafikken 
+
+## Bakgrunn 
+Avinor er en av verdens ledende aktører innen fjernstyrte tårn (remote towers), der lufttrafikktjenester leveres for én eller flere flyplasser fra et senter ved hjelp av kameraer og sensorer i stedet for et tradisjonelt tårn på stedet. Remote Towers betyr at flygeinformasjon blir gitt fra et annet sted enn selve flyplassen.
+
+AFIS-fullmektig (Aerodrome Flight Information Service) har ansvar for å overvåke luftrommet rundt en flyplass, gi trafikkinformasjon til piloter og bidra til sikkerhet – uten å gi direkte instruksjoner slik som flygeledere gjør. På flyplasser med lite trafikk er det mulig å ha en AFIS-fullmektig med ansvar for tre flyplasser parallelt. Da har AFIS-fullmektig ansvar for en flyplassgruppe. Det skal nå etableres seks slike grupper som hver kontrollerer tre flyplasser samtidig. Dette kalles multippel-drift.
+
+Formålet med dette prosjektet er å analysere når AFIS-fullmektig opplever størst arbeidsbelastning. Belastningen påvirkes særlig av to forhold:
+1. Antall fly det kommuniseres med samtidig
+2. Krevende operative forhold, værforhold som fører til hyppigere og mer detaljert dialog med pilotene.
+
+## Problembeskrivelse 
+Formålet med dette prosjektet er å analysere når AFIS-fullmektig opplever høy arbeidsbelastning. AFIS-fullmektig vil oppleve høy arbeidsbelastning når flere fly krever informasjon på samme tid. Arbeidsbelastningen øker også når det er krevende værforhold. Vi ønsker at deltagerne utvikler en modell som predikerer sannsynlighet for samtidighet (dvs. at AFIS-fullmektig må kommunisere med flere fly samtidig). Dersom fly fulgte ruteplanen hadde det vært enkelt å vite dette, men fly påvirkes av vær og andre operasjonelle forhold som gjør at det oppstår forsinkelser2. I tillegg er det en del uregelmessig trafikk som følge av ambulansefly eller annen trafikk på flyplassen. Det er også viktig for AVINOR å ha en forklarbar modell av regulatoriske hensyn (AVINOR må kunne dokumentere for luftfartstilsynet at vi har rett bemanning under gitte forhold).
+
+### Prosjekt leveranse 
+Prosjektet har som mål å utvikle samtidighetsmodell – Sannsynlighet for samtidig aktiv dialog
+
+[Bakgrunn for prosjekt.pdf](https://github.com/user-attachments/files/22747900/Bakgrunn.for.prosjekt.pdf)
 
 ## Metodevalg og tilnærming 
 
