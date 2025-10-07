@@ -20,13 +20,12 @@ class TrainConfig:
             A name or identifier for the model being trained.
 
         model_function (Callable[[], Tuple[BaseEstimator, Dict[str, Any]]]): 
-            A callable that returns a tuple `(model, params)` where:
+            A callable that returns a tuple '(model, params)' where:
               - model (BaseEstimator): An untrained scikit-learn estimator.
               - params (dict): A dictionary of hyperparameter candidates
                 for grid search.
     """
     flight_csv: str
-    model_name: str
     model_function: Callable
 
 
@@ -42,9 +41,7 @@ def train(cfg: TrainConfig)-> BaseEstimator:
         cfg (TrainConfig): 
             A configuration object containing:
             - flight_csv (str): Path to the input flight CSV file.
-            - model_name (str): A name/label for the model.
-            - model_function (Callable): A function that returns a 
-              tuple `(model, params)` where:
+            - model_function (Callable): A function that returns a tuple '(model, params)' where:
                 * model (BaseEstimator): An untrained scikit-learn model.
                 * params (dict): A dictionary of hyperparameters for grid search.
 
@@ -86,7 +83,7 @@ def model_predict(data_path: str, model: Any)  -> pd.DataFrame:
         data_path (str):
             Path to the input CSV file containing raw data.
         model (Any):
-            A trained ML model object that implements a `.predict()` method.
+            A trained ML model object that implements a '.predict()' method.
 
     Returns:
         pd.DataFrame:
