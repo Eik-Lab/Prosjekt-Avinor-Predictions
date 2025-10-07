@@ -27,6 +27,13 @@ Oversikt over system arkitektur
 
 <img width="481" height="584" alt="Avinor_Predictions_Architecture" src="https://github.com/user-attachments/assets/718aa884-6a00-48b3-9bc7-417de6d05dab" />
 
+Evaluering av modeller 
+
+<img width="1478" height="830" alt="image" src="https://github.com/user-attachments/assets/b887e1df-dc2a-4e70-8f7a-17a3a6243778" />
+
+
+
+
 ## Modellen for vår prediksjon - XGBoost 
 
 ### Modell: 
